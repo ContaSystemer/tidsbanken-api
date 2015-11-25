@@ -4,7 +4,7 @@
 `npm install`
 
 ## Configuration
-Set up `config.json`
+Set up `config.json`. Use `config.json.dist` as a template.
 
 ## Clock in
 `node index.js -i`

@@ -22,7 +22,7 @@ function ClockOut(callback) {
             throw new Error('Could not clock out.');
         } 
 
-        callback(response, body);
+        callback('out');
     });
 }
 

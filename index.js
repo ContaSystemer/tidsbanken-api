@@ -1,7 +1,8 @@
 'use strict';
 
 var config = require('./config.json'),
-    argv = require('minimist')(process.argv.slice(2), { boolean: ['i', 'o']});
+    argv = require('minimist')(process.argv.slice(2), { boolean: ['i', 'o']}),
+    logger = require('./logger');
 
 // Verify config
 if (!config.company || !config.password || !config.employeeId || !config.employeePin) {
@@ -30,12 +31,8 @@ loginCompany(function(response, body) {
  */
 function clockInOrOut() {
     if (argv.i) {
-        clockIn(function() {
-            console.log('Clocked in!');
-        });
+        clockIn(logger);
     } else if (argv.o) {
-        clockOut(function() {
-            console.log('Clocked out!');
-        });
+        clockOut(logger);
     }
 }

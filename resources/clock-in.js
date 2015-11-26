@@ -22,7 +22,7 @@ function ClockIn(callback) {
             throw new Error('Could not clock in.');
         } 
 
-        callback(response, body);
+        callback('in');
     });
 }
 

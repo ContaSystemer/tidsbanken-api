@@ -29,10 +29,24 @@ function log(action) {
         time: new Date()
     };
 
-    file.unshift(entry);
+    var day = entry.time.getDate() < 10 ? '0' + entry.time.getDate() : entry.time.getDate();
+
+    if (!file[day]) {
+        file[day] = [];
+    }
+
+    file[day].unshift(entry);
 
     updateFile(file, function() {
         console.log('Clocked ' + action + ' at: ' + getNorwegianDate(entry.time));
+
+        if (action === 'out') {
+            var lastClockIn = getLastClockIn(file[day]);
+
+            if (lastClockIn) {
+                console.log('Session lasted: ' + getDiffBetweenClockInAndOut(lastClockIn.time, entry.time));
+            }
+        }
     });
 }
 
@@ -42,7 +56,7 @@ function log(action) {
 function createFile(callback) {
     console.log(logFile + ' does not exist, trying to create...');
 
-    fs.writeFile(logFile, '[]', function(err) {
+    fs.writeFile(logFile, '{}', function(err) {
         if(err) {
             throw err;
         }
@@ -90,8 +104,31 @@ function getNorwegianDate(date) {
     var year = date.getFullYear();
     var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
     var minutes= date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
-    
+
     return hour + ':' + minutes + ' ' + day + '.' + month + '.' + year;
+}
+/**
+ * Get last clock in, if any
+ */
+function getLastClockIn(entries) {
+    for (var i = 0; i <= entries.length; i++) {
+        if (entries[i].type === 'in') {
+            return entries[i];
+        }
+    }
+
+    return undefined;
+}
+
+/**
+ * Get diff between in and out clock in hours and minutes
+ */
+function getDiffBetweenClockInAndOut(inDate, outDate) {
+    var diffMs = (outDate - new Date(inDate)); 
+    var diffHrs = Math.round((diffMs % 86400000) / 3600000);
+    var diffMins = Math.round(((diffMs % 86400000) % 3600000) / 60000);
+
+    return diffHrs + 'h ' + diffMins + 'm';
 }
 
 module.exports = Logger;

@@ -92,7 +92,7 @@ function getLogFileName() {
 
      var theMonth = month < 10 ? "0" + month : month;
 
-     return './logs/' + theMonth + '.json';
+     return __dirname + '/logs/' + theMonth + '.json';
 }
 
 /**

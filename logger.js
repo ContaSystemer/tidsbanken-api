@@ -111,6 +111,10 @@ function getNorwegianDate(date) {
  * Get last clock in, if any
  */
 function getLastClockIn(entries) {
+    if (entries.length === 0) {
+        return undefined;
+    }
+
     for (var i = 0; i <= entries.length; i++) {
         if (entries[i].type === 'in') {
             return entries[i];

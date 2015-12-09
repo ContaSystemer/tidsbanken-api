@@ -115,7 +115,7 @@ function getLastClockIn(entries) {
         return undefined;
     }
 
-    for (var i = 0; i <= entries.length; i++) {
+    for (var i = 0; i < entries.length; i++) {
         if (entries[i].type === 'in') {
             return entries[i];
         }

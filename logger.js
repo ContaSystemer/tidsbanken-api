@@ -24,12 +24,14 @@ function Logger(action) {
 function log(action) {
     var file = require(logFile);
 
+    var entryDate = new Date();
+
     var entry = {
         type: action,
-        time: new Date()
+        time: entryDate.toString()
     };
 
-    var day = entry.time.getDate() < 10 ? '0' + entry.time.getDate() : entry.time.getDate();
+    var day = entryDate.getDate() < 10 ? '0' + entryDate.getDate() : entryDate.getDate();
 
     if (!file[day]) {
         file[day] = [];
@@ -38,13 +40,13 @@ function log(action) {
     file[day].unshift(entry);
 
     updateFile(file, function() {
-        console.log('Clocked ' + action + ' at: ' + getNorwegianDate(entry.time));
+        console.log('Clocked ' + action + ' at: ' + getNorwegianDate(entryDate));
 
         if (action === 'out') {
             var lastClockIn = getLastClockIn(file[day]);
 
             if (lastClockIn) {
-                console.log('Session lasted: ' + getDiffBetweenClockInAndOut(lastClockIn.time, entry.time));
+                console.log('Session lasted: ' + getDiffBetweenClockInAndOut(lastClockIn.time, entryDate));
             }
         }
     });
@@ -91,19 +93,22 @@ function getLogFileName() {
      var month = date.getMonth() + 1;
 
      var theMonth = month < 10 ? "0" + month : month;
+     var theYear = date.getFullYear();
 
-     return __dirname + '/logs/' + theMonth + '.json';
+     return __dirname + '/logs/' + theYear + '-' + theMonth + '.json';
 }
 
 /**
  * Get Norwegian Date
  */
 function getNorwegianDate(date) {
+    var getMonth = date.getMonth() + 1;
+
     var day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-    var month = date.getMonth() < 10 ? '0' + date.getMonth() : date.getMonth();
+    var month = getMonth < 10 ? '0' + getMonth : getMonth;
     var year = date.getFullYear();
     var hour = date.getHours() < 10 ? '0' + date.getHours() : date.getHours();
-    var minutes= date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
+    var minutes = date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes();
 
     return hour + ':' + minutes + ' ' + day + '.' + month + '.' + year;
 }
@@ -117,6 +122,7 @@ function getLastClockIn(entries) {
 
     for (var i = 0; i < entries.length; i++) {
         if (entries[i].type === 'in') {
+            entries[i].time = new Date(entries[i].time);
             return entries[i];
         }
     }
@@ -128,7 +134,7 @@ function getLastClockIn(entries) {
  * Get diff between in and out clock in hours and minutes
  */
 function getDiffBetweenClockInAndOut(inDate, outDate) {
-    var diffMs = (outDate - new Date(inDate)) / 1000;
+    var diffMs = (outDate - inDate) / 1000;
     var diffHrs = Math.round((diffMs % 86400) / 3600);
     var diffMins = Math.round(((diffMs % 86400) % 3600) / 60);
 

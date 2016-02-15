@@ -135,8 +135,8 @@ function getLastClockIn(entries) {
  */
 function getDiffBetweenClockInAndOut(inDate, outDate) {
     var diffMs = (outDate - inDate) / 1000;
-    var diffHrs = Math.round((diffMs % 86400) / 3600);
-    var diffMins = Math.round(((diffMs % 86400) % 3600) / 60);
+    var diffHrs = Math.floor((diffMs % 86400) / 3600);
+    var diffMins = Math.floor(((diffMs % 86400) % 3600) / 60);
 
     return diffHrs + 'h ' + diffMins + 'm';
 }
